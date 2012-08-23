@@ -2,8 +2,8 @@ name:                fay-dom
 version:             0.1.0.0
 synopsis:            DOM FFI wrapper library for Fay
 description:         DOM FFI wrapper library for Fay.
-homepage:            https://github.com/bergmark/fay-dom
-bug-reports:         https://github.com/bergmark/fay-dom/issues
+homepage:            https://github.com/faylang/fay-dom
+bug-reports:         https://github.com/faylang/fay-dom/issues
 license:             BSD3
 license-file:        LICENSE
 author:              Adam Bergmark
