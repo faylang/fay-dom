@@ -4,7 +4,7 @@ fay-dom
 A FFI wrapper for DOM functions for use with
 [Fay](http://www.fay-lang.org). It includes functions for the more
 commonly used DOM features. See
-[fay-jquery](https://github.com/brianhv/fay-jquery) if you want
+[fay-jquery](https://github.com/faylang/fay-jquery) if you want
 wrappers for jQuery.
 
 Usage
