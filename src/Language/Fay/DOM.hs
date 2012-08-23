@@ -6,17 +6,24 @@ module Language.Fay.DOM where
 import           Language.Fay.FFI
 import           Language.Fay.Prelude
 
+
 -- | Foreign Data Declarations.
+
+data Document
+instance Foreign Document
 data Element
 instance Foreign Element
 data Event
 instance Foreign Event
 data Global
 instance Foreign Global
-data Document
-instance Foreign Document
+data NodeList
+instance Foreign NodeList
 data Timer
 instance Foreign Timer
+
+
+-- | Browser globals
 
 getWindow :: Fay Global
 getWindow = ffi "window"
@@ -24,8 +31,11 @@ getWindow = ffi "window"
 getDocument :: Fay Document
 getDocument = ffi "window.document"
 
-addOnload :: Foreign f => Fay f -> Fay ()
-addOnload = ffi "window['addEventListener'](\"load\", %1)"
+addEvent :: Foreign f => String -> Fay f -> Fay ()
+addEvent = ffi "window['addEventListener'](%1,%2)"
+
+
+-- | Events
 
 stopProp :: Event -> Fay ()
 stopProp = ffi "%1['stopPropagation']()"
@@ -33,14 +43,35 @@ stopProp = ffi "%1['stopPropagation']()"
 preventDefault :: Event -> Fay ()
 preventDefault = ffi "%1['preventDefault']()"
 
+
+-- | Element accessors
+
 createElement :: String -> Fay Element
 createElement = ffi "window['document']['createElement'](%1)"
 
-printS :: String -> Fay ()
-printS = ffi "console['log'](%1)"
+appendChild :: Element -> Element -> Fay ()
+appendChild = ffi "%1.appendChild(%2)"
 
-print :: Foreign f => f -> Fay ()
-print = ffi "console['log'](%1)"
+removeChild :: Element -> Element -> Fay ()
+removeChild = ffi "%1.removeChild(%2)"
+
+parentNode :: Element -> Fay Element
+parentNode = ffi "%1.parentNode"
+
+children :: Element -> Fay NodeList
+children = ffi "%1.children"
+
+
+-- | Logging
+
+logS :: String -> Fay ()
+logS = ffi "console['log'](%1)"
+
+log :: Foreign f => f -> Fay ()
+log = ffi "console['log'](%1)"
+
+
+-- | Timers
 
 -- | setInterval except the calling function gets the timer as an
 -- | argument so the interval can be cancelled from within it.
@@ -49,3 +80,6 @@ setInterval = ffi "(function (f,i) { var id = window['setInterval'](function () 
 
 clearInterval :: Timer -> Fay ()
 clearInterval = ffi "window['clearInterval'](%1)"
+
+setTimeout :: Double -> (Timer -> Fay ()) -> Fay Timer
+setTimeout = ffi "window['setTimeout'](%1)"
