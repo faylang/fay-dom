@@ -12,7 +12,7 @@ build-type:          Simple
 cabal-version:       >=1.8
 
 data-files:
-  src/Language/Fay/Dom.hs
+  src/Language/Fay/DOM.hs
 
 library
   hs-source-dirs: src
