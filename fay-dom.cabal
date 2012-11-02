@@ -16,6 +16,6 @@ data-files:
 
 library
   hs-source-dirs: src
-  other-modules: Language.Fay.DOM
+  exposed-modules: Language.Fay.DOM
   ghc-options: -Wall
   build-depends: fay >= 0.7
