@@ -21,6 +21,9 @@ data NodeList
 instance Foreign NodeList
 data Timer
 instance Foreign Timer
+data XMLHttpRequest
+instance Foreign XMLHttpRequest
+
 
 
 -- | Browser globals
@@ -83,3 +86,26 @@ clearInterval = ffi "window['clearInterval'](%1)"
 
 setTimeout :: Double -> (Timer -> Fay ()) -> Fay Timer
 setTimeout = ffi "window['setTimeout'](%1)"
+
+-- | XMLHttpRequest
+
+xmlHttpRequest :: Fay XMLHttpRequest
+xmlHttpRequest = ffi "(function(window) { if(window.XMLHttpRequest) return new XMLHttpRequest(); else return new ActiveXObject('Microsoft.XMLHTTP'); })(window)"
+
+open :: XMLHttpRequest -> String -> String -> Fay ()
+open = ffi "%1.open(%2, %3, true)"
+
+send :: XMLHttpRequest -> Fay ()
+send = ffi "%1.send()"
+
+setReadyStateHandler :: XMLHttpRequest -> (XMLHttpRequest -> Fay ()) -> Fay ()
+setReadyStateHandler = ffi "%1.onreadystatechange = function() { %2(%1); }"
+
+readyState :: XMLHttpRequest -> Fay Int
+readyState = ffi "%1.readyState"
+
+responseText :: XMLHttpRequest -> Fay String
+responseText = ffi "%1.responseText"
+
+status :: XMLHttpRequest -> Fay Int
+status = ffi "%1.status"
