@@ -89,11 +89,17 @@ setTimeout = ffi "window['setTimeout'](%1)"
 
 -- | XMLHttpRequest
 
+data RequestMethod = GET | POST | PUT | HEAD
+instance Foreign RequestMethod
+
+data ReadyState = UNSENT | OPENED | HEADERS_RECEIVED | LOADING | DONE
+instance Foreign ReadyState
+
 xmlHttpRequest :: Fay XMLHttpRequest
 xmlHttpRequest = ffi "(function(window) { if(window['XMLHttpRequest']) return new XMLHttpRequest(); else return new ActiveXObject('Microsoft.XMLHTTP'); })(window)"
 
-open :: String -> String -> XMLHttpRequest -> Fay XMLHttpRequest
-open = ffi "(function(method, url, xhr) { xhr['open'](method, url, true); return xhr; })(%1, %2, %3)"
+open :: RequestMethod -> String -> XMLHttpRequest -> Fay XMLHttpRequest
+open = ffi "(function(method, url, xhr) { xhr['open'](method['instance'], url, true); return xhr; })(%1, %2, %3)"
 
 send :: XMLHttpRequest -> Fay ()
 send = ffi "%1['send']()"
@@ -101,8 +107,8 @@ send = ffi "%1['send']()"
 setReadyStateHandler :: (XMLHttpRequest -> Fay ()) -> XMLHttpRequest -> Fay XMLHttpRequest
 setReadyStateHandler = ffi "(function(handler, xhr) { xhr['onreadystatechange'] = function() { handler(xhr); }; return xhr; })(%1, %2)"
 
-readyState :: XMLHttpRequest -> Fay Int
-readyState = ffi "%1['readyState']"
+readyState :: XMLHttpRequest -> Fay ReadyState
+readyState = ffi "{ instance: ['UNSENT', 'OPENED', 'HEADERS_RECEIVED', 'LOADING', 'DONE'][%1['readyState']] }"
 
 responseText :: XMLHttpRequest -> Fay String
 responseText = ffi "%1['responseText']"
