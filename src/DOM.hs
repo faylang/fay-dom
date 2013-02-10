@@ -1,32 +1,27 @@
 {-# LANGUAGE EmptyDataDecls    #-}
-{-# LANGUAGE NoImplicitPrelude #-}
 
-module Language.Fay.DOM where
+-- | Document object model functions. Most of this doesn't have
+-- anything to do with the DOM and is actually ECMA library stuff, but
+-- I'll leave it in for now.
 
-import           Language.Fay.FFI
-import           Language.Fay.Prelude
+module DOM where
 
+import FFI
+import Prelude
 
--- | Foreign Data Declarations.
+--------------------------------------------------------------------------------
+-- Foreign Data Declarations.
 
 data Document
-instance Foreign Document
 data Element
-instance Foreign Element
 data Event
-instance Foreign Event
 data Global
-instance Foreign Global
 data NodeList
-instance Foreign NodeList
 data Timer
-instance Foreign Timer
 data XMLHttpRequest
-instance Foreign XMLHttpRequest
 
-
-
--- | Browser globals
+--------------------------------------------------------------------------------
+-- Browser globals
 
 getWindow :: Fay Global
 getWindow = ffi "window"
@@ -34,11 +29,11 @@ getWindow = ffi "window"
 getDocument :: Fay Document
 getDocument = ffi "window.document"
 
-addEvent :: Foreign f => String -> Fay f -> Fay ()
+addEvent :: String -> Fay f -> Fay ()
 addEvent = ffi "window['addEventListener'](%1,%2)"
 
-
--- | Events
+--------------------------------------------------------------------------------
+-- Events.
 
 stopProp :: Event -> Fay ()
 stopProp = ffi "%1['stopPropagation']()"
@@ -46,8 +41,8 @@ stopProp = ffi "%1['stopPropagation']()"
 preventDefault :: Event -> Fay ()
 preventDefault = ffi "%1['preventDefault']()"
 
-
--- | Element accessors
+--------------------------------------------------------------------------------
+-- Element accessors.
 
 createElement :: String -> Fay Element
 createElement = ffi "window['document']['createElement'](%1)"
@@ -64,17 +59,8 @@ parentNode = ffi "%1.parentNode"
 children :: Element -> Fay NodeList
 children = ffi "%1.children"
 
-
--- | Logging
-
-logS :: String -> Fay ()
-logS = ffi "console['log'](%1)"
-
-log :: Foreign f => f -> Fay ()
-log = ffi "console['log'](%1)"
-
-
--- | Timers
+--------------------------------------------------------------------------------
+-- Timers
 
 -- | setInterval except the calling function gets the timer as an
 -- | argument so the interval can be cancelled from within it.
@@ -85,15 +71,14 @@ clearInterval :: Timer -> Fay ()
 clearInterval = ffi "window['clearInterval'](%1)"
 
 setTimeout :: Double -> (Timer -> Fay ()) -> Fay Timer
-setTimeout = ffi "window['setTimeout'](%1)"
+setTimeout = ffi "window['setTimeout'](%2,%1)"
 
--- | XMLHttpRequest
+--------------------------------------------------------------------------------
+-- XMLHttpRequest
 
 data RequestMethod = GET | POST | PUT | HEAD
-instance Foreign RequestMethod
 
 data ReadyState = UNSENT | OPENED | HEADERS_RECEIVED | LOADING | DONE
-instance Foreign ReadyState
 
 xmlHttpRequest :: Fay XMLHttpRequest
 xmlHttpRequest = ffi "(function(window) { if(window['XMLHttpRequest']) return new XMLHttpRequest(); else return new ActiveXObject('Microsoft.XMLHTTP'); })(window)"
