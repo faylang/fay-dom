@@ -29,8 +29,20 @@ getWindow = ffi "window"
 getDocument :: Fay Document
 getDocument = ffi "window.document"
 
+getBody :: Fay Element
+getBody = ffi "document.body"
+
+getElementById :: String -> Fay Element
+getElementById = ffi "document['getElementById'](%1)"
+
+getElementsByName :: String -> Fay [Element]
+getElementsByName = ffi "document['getElementsByName'](%1)"
+
 addEvent :: String -> Fay f -> Fay ()
 addEvent = ffi "window['addEventListener'](%1,%2)"
+
+removeEvent :: Element -> String -> (Event -> Fay f) -> Fay ()
+removeEvent = ffi "%1['removeEventListener'](%2, %3)"
 
 --------------------------------------------------------------------------------
 -- Events.
@@ -48,16 +60,111 @@ createElement :: String -> Fay Element
 createElement = ffi "window['document']['createElement'](%1)"
 
 appendChild :: Element -> Element -> Fay ()
-appendChild = ffi "%1.appendChild(%2)"
+appendChild = ffi "%1['appendChild'](%2)"
+
+appendChildBefore :: Element -> Element -> Fay ()
+appendChildBefore = ffi "%1['parentNode']['insertBefore'](%2, %1)"
 
 removeChild :: Element -> Element -> Fay ()
-removeChild = ffi "%1.removeChild(%2)"
+removeChild = ffi "%1['removeChild'](%2)"
 
 parentNode :: Element -> Fay Element
-parentNode = ffi "%1.parentNode"
+parentNode = ffi "%1['parentNode']"
 
+-- Gets all the child nodes except text, comments etc.
 children :: Element -> Fay NodeList
-children = ffi "%1.children"
+children = ffi "%1['children']"
+
+-- Gets all the child nodes including text, comments etc.
+childNodes :: Element -> Fay NodeList
+childNodes = ffi "%1['childNodes']"
+
+-- Convert a NodeList to an array
+nodeListToArray :: NodeList -> [Element]
+nodeListToArray = ffi "Array.prototype.slice.call(%1)"
+
+-- Text nodes require special handling
+createTextNode :: String -> Fay Element
+createTextNode = ffi "document['createTextNode'](%1)"
+
+-- Get/Set the text for the text node
+getTextData :: Element -> Fay String
+getTextData = ffi "%1['data']"
+
+-- NOTE: This can only be run on text elements
+setTextData :: Element -> String -> Fay ()
+setTextData = ffi "%1['data'] = %2"
+
+clearInnerHtml :: Element -> Fay ()
+clearInnerHtml = ffi "%1['innerHTML'] = ''"
+
+-- Adding, Removing, and Testing for classes
+-- This only works in modern browsers
+-- https://developer.mozilla.org/en-US/docs/DOM/element.classList
+klass :: Element -> String -> Fay ()
+klass = addClass
+
+addClass :: Element -> String -> Fay ()
+addClass = ffi "%1.classList['add'](%2)"
+
+removeClass :: Element -> String -> Fay ()
+removeClass = ffi "%1['classList']['remove'](%2)"
+
+toggleClass :: Element -> String -> Fay ()
+toggleClass = ffi "%1['classList']['toggle'](%2)"
+
+hasClass :: Element -> String -> Fay Bool
+hasClass = ffi "%1['classList']['contains'](%2)"
+
+--------------------------------------------------------------------------------
+-- Attributes
+
+setAttr :: Element -> String -> String -> Fay ()
+setAttr = ffi "%1['setAttribute'](%2, %3)"
+
+getAttr :: Element -> String -> Fay String
+getAttr = ffi "%1['getAttribute'](%2)"
+
+hasAttr :: Element -> String -> Fay Bool
+hasAttr = ffi "%1['hasAttribute'](%2)"
+
+
+--------------------------------------------------------------------------------
+-- Form elements
+
+-- Get/Set the value for a textfields/textarea/hidden/password input
+-- On checkboxes, this is the value that is sent to the server
+getValue :: Element -> Fay String
+getValue = ffi "%1['value']"
+
+setValue :: Element -> String -> Fay ()
+setValue = ffi "%1['value'] = %2"
+
+-- Get/Set the checked status for checkbox
+isChecked :: Element -> Fay Bool
+isChecked = ffi "%1['checked']"
+
+setChecked :: Element -> Bool -> Fay ()
+setChecked = ffi "%1['checked'] = %2"
+
+
+--------------------------------------------------------------------------------
+-- Location
+
+-- Get current URL
+getCurrentUrl :: Fay String
+getCurrentUrl = ffi "window['location']['href']"
+
+
+--------------------------------------------------------------------------------
+-- Logging
+
+logS :: String -> Fay ()
+logS = ffi "console['log'](%1)"
+
+logF :: Foreign f => f -> Fay ()
+logF = ffi "console['log'](%1)"
+
 
 --------------------------------------------------------------------------------
 -- Timers
@@ -105,3 +212,26 @@ responseText = ffi "%1['responseText']"
 
 status :: XMLHttpRequest -> Fay Int
 status = ffi "%1['status']"
+
+--------------------------------------------------------------------------------
+-- Utility
+
+void :: Fay a -> Fay ()
+void m = m >> return ()
+
+-- Read an int
+parseInt :: String -> Fay Int
+parseInt = ffi "parseInt(%1, 10)"
+
+-- Scroll a dom element into view
+scrollIntoView :: Element -> Fay ()
+scrollIntoView = ffi "%1.scrollIntoView()"
+
+-- Scroll the document body by the specified number of pixels
+scrollRelative :: Int -> Fay ()
+scrollRelative = ffi "window.scrollBy(0,%1)"
+
+-- Scroll the document body to the specified pixel height
+scrollAbsolute :: Int -> Fay ()
+scrollAbsolute = ffi "window.scrollTo(0,%1)"
+
