@@ -65,16 +65,21 @@ children = ffi "%1.children"
 -- | setInterval except the calling function gets the timer as an
 -- | argument so the interval can be cancelled from within it.
 setInterval :: Double -> (Timer -> Fay ()) -> Fay Timer
-setInterval = ffi "(function (f,i) { var id = window['setInterval'](function () { f(id); }, i); })(%2,%1)"
+setInterval = ffi "(function (f,i) { var id = window['setInterval'](function () { f(id); }, i); return id; })(%2,%1)"
 
 clearInterval :: Timer -> Fay ()
 clearInterval = ffi "window['clearInterval'](%1)"
 
+-- | setTimeout except the calling function gets the timer as an
+-- | argument. Primarily for symmetry with setInterval.
 setTimeout :: Double -> (Timer -> Fay ()) -> Fay Timer
-setTimeout = ffi "window['setTimeout'](%2,%1)"
+setTimeout = ffi "(function (f,i) { var id = window['setTimeout'](function () { f(id); }, i); return id; })(%2,%1)"
+
+clearTimeout :: Timer -> Fay ()
+clearTimeout = ffi "window['clearTimeout'](%1)"
 
 --------------------------------------------------------------------------------
--- XMLHttpRequest
+-- XHR
 
 data RequestMethod = GET | POST | PUT | HEAD
 
