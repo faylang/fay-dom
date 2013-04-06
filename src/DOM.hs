@@ -162,7 +162,7 @@ getCurrentUrl = ffi "window['location']['href']"
 logS :: String -> Fay ()
 logS = ffi "console['log'](%1)"
 
-logF :: Foreign f => f -> Fay ()
+logF :: f -> Fay ()
 logF = ffi "console['log'](%1)"
 
 
