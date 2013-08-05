@@ -83,6 +83,31 @@ childNodes = ffi "%1['childNodes']"
 nodeListToArray :: NodeList -> [Element]
 nodeListToArray = ffi "Array.prototype.slice.call(%1)"
 
+-- fetch all nodes between two dom nodes
+nodesBetween :: Element -> Element -> Fay [Element]
+nodesBetween = ffi "\
+  \(function(start, end) {\
+  \  var i, contents, result = [], parentNode = start.parentNode;\
+  \  if(parentNode !== end.parentNode) return;\
+  \  contents = Array.prototype.slice.call(parentNode.childNodes);\
+  \  for(i=contents.indexOf(start); i<contents.indexOf(end); i++) {\
+  \    result.push(contents[i]);\
+  \  }\
+  \})(%1, %2)"
+
+-- remove all nodes between two dom nodes
+removeNodesBetween :: Element -> Element -> Fay ()
+removeNodesBetween = ffi "\
+  \(function(start, end) {\
+  \  var i, contents, parentNode = start.parentNode;\
+  \  if(parentNode !== end.parentNode) return;\
+  \  contents = Array.prototype.slice.call(parentNode.childNodes);\
+  \  for(i=contents.indexOf(start); i<contents.indexOf(end); i++) {\
+  \    parentNode.removeChild(contents[i]);\
+  \  }\
+  \})(%1, %2)"
+
+
 -- Text nodes require special handling
 createTextNode :: String -> Fay Element
 createTextNode = ffi "document['createTextNode'](%1)"
@@ -147,6 +172,33 @@ isChecked = ffi "%1['checked']"
 setChecked :: Element -> Bool -> Fay ()
 setChecked = ffi "%1['checked'] = %2"
 
+-- Get the selected value of a radio group
+getRadioValue :: Element -> Fay String
+getRadioValue = ffi "\
+  \(function(name) {\
+  \  var i, rs = document.getElementsByName(name);\
+  \  if(rs) {\
+  \    for(var i=0; i<rs.length; i++) {\
+  \      var radio = rs[i];\
+  \      if(radio.type === 'radio' && radio.checked)\
+  \        return radio.value;\
+  \    }\
+  \  }\
+  \})(%1)"
+
+-- Set the value of a radio group
+setRadioValue :: String -> String -> Fay ()
+setRadioValue = ffi "\
+  \(function(name, val) {\
+  \  var i, rs = document.getElementsByName(name);\
+  \  if(rs) {\
+  \    for(var i=0; i<rs.length; i++) {\
+  \      var radio = rs[i];\
+  \      if(radio.type === 'radio' && radio.value === val)\
+  \        radio.checked = true;\
+  \    }\
+  \  }\
+  \})(%1, %2)"
 
 --------------------------------------------------------------------------------
 -- Location
