@@ -173,7 +173,7 @@ setChecked :: Element -> Bool -> Fay ()
 setChecked = ffi "%1['checked'] = %2"
 
 -- Get the selected value of a radio group
-getRadioValue :: Element -> Fay String
+getRadioValue :: String -> Fay String
 getRadioValue = ffi "\
   \(function(name) {\
   \  var i, rs = document.getElementsByName(name);\
