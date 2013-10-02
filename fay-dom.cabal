@@ -1,16 +1,23 @@
 name:                fay-dom
 version:             0.2.0.0
 synopsis:            DOM FFI wrapper library for Fay
-description:         DOM FFI wrapper library for Fay.
+description:         DOM FFI wrapper library for Fay
 homepage:            https://github.com/faylang/fay-dom
 bug-reports:         https://github.com/faylang/fay-dom/issues
 license:             BSD3
 license-file:        LICENSE
 author:              Adam Bergmark
-maintainer:          Adam Bergmark
+maintainer:          adam@edea.se
+copyright:           2012 Adam Bergmark
+category:            Web, Fay
 build-type:          Simple
 cabal-version:       >=1.8
 data-files:          src/DOM.hs
+
+source-repository head
+  type: git
+  location: https://github.com/faylang/fay-dom.git
+
 
 library
   hs-source-dirs: src
