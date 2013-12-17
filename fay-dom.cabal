@@ -1,5 +1,5 @@
 name:                fay-dom
-version:             0.2.0.1
+version:             0.3
 synopsis:            DOM FFI wrapper library for Fay
 description:         DOM FFI wrapper library for Fay
 homepage:            https://github.com/faylang/fay-dom
