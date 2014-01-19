@@ -1,4 +1,4 @@
-{-# LANGUAGE EmptyDataDecls    #-}
+{-# LANGUAGE EmptyDataDecls #-}
 
 -- | Document object model functions. Most of this doesn't have
 -- anything to do with the DOM and is actually ECMA library stuff, but
@@ -268,9 +268,6 @@ status = ffi "%1['status']"
 --------------------------------------------------------------------------------
 -- Utility
 
-void :: Fay a -> Fay ()
-void m = m >> return ()
-
 -- Read an int
 parseInt :: String -> Fay Int
 parseInt = ffi "parseInt(%1, 10)"
@@ -286,4 +283,3 @@ scrollRelative = ffi "window.scrollBy(0,%1)"
 -- Scroll the document body to the specified pixel height
 scrollAbsolute :: Int -> Fay ()
 scrollAbsolute = ffi "window.scrollTo(0,%1)"
-

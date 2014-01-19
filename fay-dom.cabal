@@ -26,4 +26,5 @@ library
   hs-source-dirs: src
   exposed-modules: DOM
   ghc-options: -Wall
-  build-depends: fay-base >= 0.14.1.0
+  build-depends:
+    fay-base == 0.19.*
