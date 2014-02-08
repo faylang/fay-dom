@@ -10,24 +10,17 @@ wrappers for jQuery.
 Usage
 -----
 
-```
-git clone git://github.com/bergmark/fay-dom.git
-cd fay-dom
-cabal install
-```
+Just install it with cabal:
 
-The library is now installed in your cabal directory and can be seen
-in haskell-mode auto-completion and such. To use this with Fay, use the `--include` flag:
+    $ cabal install fay-dom
+    
+Then include it at the top of your `file.hs`:
 
-```
-fay --include=~/.cabal/share/fay-dom-0.1.0.0/src myfile.hs
-```
+    import DOM
+    
+Finally, build the javascript including the package, as explained on [the wiki](https://github.com/faylang/fay/wiki/Package-management-with-Cabal):
 
-To typecheck `myfile.hs` with ghc, do:
-
-```
-ghc ~/.cabal/share/fay-dom-0.1.0.0/src/ myfile.hs
-```
+    $ fay --package fay-dom file.hs
 
 Development Status
 ------------------
