@@ -1,5 +1,6 @@
 {-# LANGUAGE EmptyDataDecls #-}
-
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RebindableSyntax #-}
 -- | Document object model functions. Most of this doesn't have
 -- anything to do with the DOM and is actually ECMA library stuff, but
 -- I'll leave it in for now.
@@ -8,6 +9,7 @@ module DOM where
 
 import FFI
 import Prelude
+import Fay.Text
 
 --------------------------------------------------------------------------------
 -- Foreign Data Declarations.
@@ -32,16 +34,16 @@ getDocument = ffi "window.document"
 getBody :: Fay Element
 getBody = ffi "document.body"
 
-getElementById :: String -> Fay Element
+getElementById :: Text -> Fay Element
 getElementById = ffi "document['getElementById'](%1)"
 
-getElementsByName :: String -> Fay [Element]
+getElementsByName :: Text -> Fay [Element]
 getElementsByName = ffi "document['getElementsByName'](%1)"
 
-addEvent :: String -> Fay f -> Fay ()
+addEvent :: Text -> Fay f -> Fay ()
 addEvent = ffi "window['addEventListener'](%1,%2)"
 
-removeEvent :: Element -> String -> (Event -> Fay f) -> Fay ()
+removeEvent :: Element -> Text -> (Event -> Fay f) -> Fay ()
 removeEvent = ffi "%1['removeEventListener'](%2, %3)"
 
 --------------------------------------------------------------------------------
@@ -56,7 +58,7 @@ preventDefault = ffi "%1['preventDefault']()"
 --------------------------------------------------------------------------------
 -- Element accessors.
 
-createElement :: String -> Fay Element
+createElement :: Text -> Fay Element
 createElement = ffi "window['document']['createElement'](%1)"
 
 appendChild :: Element -> Element -> Fay ()
@@ -109,15 +111,15 @@ removeNodesBetween = ffi "\
 
 
 -- Text nodes require special handling
-createTextNode :: String -> Fay Element
+createTextNode :: Text -> Fay Element
 createTextNode = ffi "document['createTextNode'](%1)"
 
 -- Get/Set the text for the text node
-getTextData :: Element -> Fay String
+getTextData :: Element -> Fay Text
 getTextData = ffi "%1['data']"
 
 -- NOTE: This can only be run on text elements
-setTextData :: Element -> String -> Fay ()
+setTextData :: Element -> Text -> Fay ()
 setTextData = ffi "%1['data'] = %2"
 
 clearInnerHtml :: Element -> Fay ()
@@ -126,31 +128,31 @@ clearInnerHtml = ffi "%1['innerHTML'] = ''"
 -- Adding, Removing, and Testing for classes
 -- This only works in modern browsers
 -- https://developer.mozilla.org/en-US/docs/DOM/element.classList
-klass :: Element -> String -> Fay ()
+klass :: Element -> Text -> Fay ()
 klass = addClass
 
-addClass :: Element -> String -> Fay ()
+addClass :: Element -> Text -> Fay ()
 addClass = ffi "%1.classList['add'](%2)"
 
-removeClass :: Element -> String -> Fay ()
+removeClass :: Element -> Text -> Fay ()
 removeClass = ffi "%1['classList']['remove'](%2)"
 
-toggleClass :: Element -> String -> Fay ()
+toggleClass :: Element -> Text -> Fay ()
 toggleClass = ffi "%1['classList']['toggle'](%2)"
 
-hasClass :: Element -> String -> Fay Bool
+hasClass :: Element -> Text -> Fay Bool
 hasClass = ffi "%1['classList']['contains'](%2)"
 
 --------------------------------------------------------------------------------
 -- Attributes
 
-setAttr :: Element -> String -> String -> Fay ()
+setAttr :: Element -> Text -> Text -> Fay ()
 setAttr = ffi "%1['setAttribute'](%2, %3)"
 
-getAttr :: Element -> String -> Fay String
+getAttr :: Element -> Text -> Fay Text
 getAttr = ffi "%1['getAttribute'](%2)"
 
-hasAttr :: Element -> String -> Fay Bool
+hasAttr :: Element -> Text -> Fay Bool
 hasAttr = ffi "%1['hasAttribute'](%2)"
 
 
@@ -159,10 +161,10 @@ hasAttr = ffi "%1['hasAttribute'](%2)"
 
 -- Get/Set the value for a textfields/textarea/hidden/password input
 -- On checkboxes, this is the value that is sent to the server
-getValue :: Element -> Fay String
+getValue :: Element -> Fay Text
 getValue = ffi "%1['value']"
 
-setValue :: Element -> String -> Fay ()
+setValue :: Element -> Text -> Fay ()
 setValue = ffi "%1['value'] = %2"
 
 -- Get/Set the checked status for checkbox
@@ -173,7 +175,7 @@ setChecked :: Element -> Bool -> Fay ()
 setChecked = ffi "%1['checked'] = %2"
 
 -- Get the selected value of a radio group
-getRadioValue :: String -> Fay String
+getRadioValue :: Text -> Fay Text
 getRadioValue = ffi "\
   \(function(name) {\
   \  var i, rs = document.getElementsByName(name);\
@@ -187,7 +189,7 @@ getRadioValue = ffi "\
   \})(%1)"
 
 -- Set the value of a radio group
-setRadioValue :: String -> String -> Fay ()
+setRadioValue :: Text -> Text -> Fay ()
 setRadioValue = ffi "\
   \(function(name, val) {\
   \  var i, rs = document.getElementsByName(name);\
@@ -204,14 +206,14 @@ setRadioValue = ffi "\
 -- Location
 
 -- Get current URL
-getCurrentUrl :: Fay String
+getCurrentUrl :: Fay Text
 getCurrentUrl = ffi "window['location']['href']"
 
 
 --------------------------------------------------------------------------------
 -- Logging
 
-logS :: String -> Fay ()
+logS :: Text -> Fay ()
 logS = ffi "console['log'](%1)"
 
 logF :: f -> Fay ()
@@ -247,7 +249,7 @@ data ReadyState = UNSENT | OPENED | HEADERS_RECEIVED | LOADING | DONE
 xmlHttpRequest :: Fay XMLHttpRequest
 xmlHttpRequest = ffi "(function(window) { if(window['XMLHttpRequest']) return new XMLHttpRequest(); else return new ActiveXObject('Microsoft.XMLHTTP'); })(window)"
 
-open :: RequestMethod -> String -> XMLHttpRequest -> Fay XMLHttpRequest
+open :: RequestMethod -> Text -> XMLHttpRequest -> Fay XMLHttpRequest
 open = ffi "(function(method, url, xhr) { xhr['open'](method['instance'], url, true); return xhr; })(%1, %2, %3)"
 
 send :: XMLHttpRequest -> Fay ()
@@ -259,7 +261,7 @@ setReadyStateHandler = ffi "(function(handler, xhr) { xhr['onreadystatechange'] 
 readyState :: XMLHttpRequest -> Fay ReadyState
 readyState = ffi "{ instance: ['UNSENT', 'OPENED', 'HEADERS_RECEIVED', 'LOADING', 'DONE'][%1['readyState']] }"
 
-responseText :: XMLHttpRequest -> Fay String
+responseText :: XMLHttpRequest -> Fay Text
 responseText = ffi "%1['responseText']"
 
 status :: XMLHttpRequest -> Fay Int
@@ -269,7 +271,7 @@ status = ffi "%1['status']"
 -- Utility
 
 -- Read an int
-parseInt :: String -> Fay Int
+parseInt :: Text -> Fay Int
 parseInt = ffi "parseInt(%1, 10)"
 
 -- Scroll a dom element into view

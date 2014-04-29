@@ -28,3 +28,4 @@ library
   ghc-options: -Wall
   build-depends:
     fay-base == 0.19.*
+    fay-text == 0.3.*
