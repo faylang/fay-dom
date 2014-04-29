@@ -13,14 +13,16 @@ Usage
 Just install it with cabal:
 
     $ cabal install fay-dom
-    
+
 Then include it at the top of your `file.hs`:
 
     import DOM
-    
+
+fay-dom uses [fay-text](http://www.github.com/faylang/fay-text) so you probably want to enable `OverloadedStrings` and `RebindableSyntax` when using this package.
+
 Finally, build the javascript including the package, as explained on [the wiki](https://github.com/faylang/fay/wiki/Package-management-with-Cabal):
 
-    $ fay --package fay-dom file.hs
+    $ fay --package fay-text,fay-dom file.hs
 
 Development Status
 ------------------

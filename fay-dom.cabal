@@ -1,5 +1,5 @@
 name:                fay-dom
-version:             0.3
+version:             0.4
 synopsis:            DOM FFI wrapper library for Fay
 description:         DOM FFI wrapper library for Fay
 homepage:            https://github.com/faylang/fay-dom
@@ -15,6 +15,7 @@ cabal-version:       >=1.8
 extra-source-files:
   LICENSE
   README.md
+  CHANGELOG.md
 data-files:          src/DOM.hs
 
 source-repository head
@@ -29,4 +30,3 @@ library
   build-depends:
     fay-base == 0.19.*,
     fay-text == 0.3.*
-
