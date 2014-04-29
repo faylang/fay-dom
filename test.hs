@@ -1,8 +1,12 @@
 -- Compile with: fay --html-wrapper test.hs --package fay-dom -p
-import Prelude
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RebindableSyntax #-}
+
+import Prelude (print, (>>), fromInteger, return, ($))
 import DOM
+import Fay.Text
 
 main = do
-  putStrLn "Hai"
-  setTimeout 200 $ \t -> putStrLn "Hello, World!"
-  putStrLn "Bah"
+  print "Hai"
+  setTimeout 200 $ \t -> print "Hello, World!"
+  print "Bah"
