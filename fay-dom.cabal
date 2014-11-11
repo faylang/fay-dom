@@ -28,4 +28,4 @@ library
   exposed-modules: DOM
   ghc-options: -Wall
   build-depends:
-    fay-base >= 0.19.4.0
+    fay-base >= 0.19.4.0 && < 0.20
