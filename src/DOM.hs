@@ -9,7 +9,7 @@ module DOM where
 
 import FFI
 import Prelude
-import Fay.Text
+import Data.Text
 
 --------------------------------------------------------------------------------
 -- Foreign Data Declarations.
