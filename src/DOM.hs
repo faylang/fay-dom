@@ -41,7 +41,7 @@ getElementsByName :: Text -> Fay [Element]
 getElementsByName = ffi "document['getElementsByName'](%1)"
 
 addEvent :: Element -> Text -> Fay f -> Fay ()
-addEvent = ffi "%1['addEventListener'](%1,%2)"
+addEvent = ffi "%1['addEventListener'](%2,%3)"
 
 removeEvent :: Element -> Text -> (Event -> Fay f) -> Fay ()
 removeEvent = ffi "%1['removeEventListener'](%2, %3)"
